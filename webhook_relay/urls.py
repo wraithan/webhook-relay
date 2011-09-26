@@ -1,17 +1,15 @@
-from django.conf.urls.defaults import patterns, include, url
+from django.contrib import admin
+from dselector import Parser
 
-# Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
 
-urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'webhook_relay.views.home', name='home'),
-    # url(r'^webhook_relay/', include('webhook_relay.foo.urls')),
+admin.autodiscover()
+parser = Parser()
+url = parser.url
 
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
-    # url(r'^admin/', include(admin.site.urls)),
+urlpatterns = parser.patterns(
+    # base import level
+    '',
+    # urls
+    url(r'hook/{hook:slug}/{slug:slug}', 'core.views.handler', name='handler'),
+    url(r'admin/(.*)!', admin.site.root),
 )
