@@ -1,15 +1,17 @@
-from core.models import Data, Emitter
+from core.models import Data, HookEmitterAssoc
 from celery.decorators import task
 from urllib import urlencode
 from urllib2 import urlopen
+import json
 
 
 name = 'callback'
 fields = ['url',]
 
 @task(name=name)
-def emit(emitter_id, data_id, step):
+def emit(hea_id, data_id):
     data = Data.objects.get(id=data_id)
-    hea = emitter.hookemitterassoc_set.filter(hook__id=data.hook_id, step=step)
+    hea = HookEmitterAssoc.objects.get(id=hea_id)
 
-    urlopen(hea.field('url'), urlencode(data))
+    encoded_data = urlencode(json.loads(data.post_body))
+    urlopen(str(hea.field('url')), data=encoded_data)
