@@ -32,21 +32,40 @@ class Processor(models.Model):
     def process(self, data, step):
         __import__('tasks.processors.' + self.task_name).process(self.id, data.id, step)
 
+
 class Emitter(models.Model):
     name = models.CharField(max_length=100)
     task_name = models.CharField(max_length=100)
+    fields = models.ManyToManyField('core.EmitterField')
 
     def emit(self, data, step):
         __import__('tasks.emitters.' + self.task_name).emit.delay(self.id, data.id, step)
+
+
+class EmitterField(models.Model):
+    name = models.CharField(max_length=100)
+
 
 class HookProcessorAssoc(models.Model):
     hook = models.ForeignKey('core.Hook')
     processor = models.ForeignKey('core.Processor')
     step = models.PositiveIntegerField()
     relies_on_step = models.PositiveIntegerField()
+    fields = models.ManyToManyField('core.HookField')
 
 
 class HookEmitterAssoc(models.Model):
     hook = models.ForeignKey('core.Hook')
     emitter = models.ForeignKey('core.Emitter')
     relies_on_step = models.PositiveIntegerField()
+    fields = models.ManyToManyField('core.HookField')
+
+    def field(self, field_name):
+        try:
+            return self.fields.get(name=field_name).value
+        except models.DoesNotExist:
+            return None
+
+class HookField(models.Models):
+    name = models.CharField(max_length=100)
+    value = models.TextField()

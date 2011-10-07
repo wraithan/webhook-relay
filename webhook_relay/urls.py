@@ -10,6 +10,6 @@ urlpatterns = parser.patterns(
     # base import level
     '',
     # urls
-    url(r'hook/{hook:slug}/{slug:slug}', 'core.views.handler', name='handler'),
+    url(r'v1/{hook:slug}/{slug:slug}', 'core.views.handler', name='handler'),
     url(r'admin/(.*)!', admin.site.root),
 )
