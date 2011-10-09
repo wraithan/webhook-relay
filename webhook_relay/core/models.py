@@ -61,7 +61,8 @@ class HookProcessorAssoc(HasFields, models.Model):
 
     def process(self, data, step):
         load_source(self.processor.task_name,
-                    'tasks/processors/' + self.processor.task_name + '.py').process(self.id, data.id, step)
+                    'tasks/processors/' + self.processor.task_name + '.py'
+                    ).process(self.id, data.id, step)
 
 
 class HookEmitterAssoc(HasFields, models.Model):
@@ -71,7 +72,9 @@ class HookEmitterAssoc(HasFields, models.Model):
     fields = models.ManyToManyField('core.HookField')
 
     def emit(self, data):
-        load_source(self.emitter.task_name, 'tasks/emitters/' + self.emitter.task_name + '.py').emit.delay(self.id, data.id)
+        load_source(self.emitter.task_name,
+                    'tasks/emitters/' + self.emitter.task_name + '.py'
+                    ).emit.delay(self.id, data.id)
 
 
 class HookField(models.Model):
