@@ -13,10 +13,10 @@ class Hook(models.Model):
     class Meta:
         unique_together = ("slug", "owner")
 
-    def next_action(self, data, step):
-        for processor in self.hookprocessorassoc_set.filter(relies_on_step=0):
-            processor.process(data, step=1)
-        for emitter in self.hookemitterassoc_set.filter(relies_on_step=0):
+    def next_action(self, data, just_completed=None):
+        for processor in self.hookprocessorassoc_set.filter(relies_on=just_completed):
+            processor.process(data)
+        for emitter in self.hookemitterassoc_set.filter(relies_on=just_completed):
             emitter.emit(data)
 
 
@@ -59,8 +59,7 @@ class BaseField(models.Model):
 class HookProcessorAssoc(HasFields, models.Model):
     hook = models.ForeignKey('core.Hook')
     processor = models.ForeignKey('core.Processor')
-    step = models.PositiveIntegerField()
-    relies_on_step = models.PositiveIntegerField()
+    relies_on = models.ForeignKey('self', null=True)
     fields = models.ManyToManyField('core.HookField')
 
     def process(self, data, step):
@@ -72,7 +71,7 @@ class HookProcessorAssoc(HasFields, models.Model):
 class HookEmitterAssoc(HasFields, models.Model):
     hook = models.ForeignKey('core.Hook')
     emitter = models.ForeignKey('core.Emitter')
-    relies_on_step = models.PositiveIntegerField()
+    relies_on = models.ForeignKey('core.HookProcessorAssoc', null=True)
     fields = models.ManyToManyField('core.HookField')
 
     def emit(self, data):
