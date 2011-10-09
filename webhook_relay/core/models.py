@@ -26,21 +26,6 @@ class Data(models.Model):
     received_at = models.DateTimeField(auto_now_add=True)
 
 
-class Processor(models.Model):
-    name = models.CharField(max_length=100)
-    task_name = models.CharField(max_length=100)
-
-
-class Emitter(models.Model):
-    name = models.CharField(max_length=100)
-    task_name = models.CharField(max_length=100)
-    fields = models.ManyToManyField('core.EmitterField')
-
-
-class EmitterField(models.Model):
-    name = models.CharField(max_length=100)
-
-
 class HasFields(models.Model):
     class Meta:
         abstract = True
@@ -50,6 +35,25 @@ class HasFields(models.Model):
             return self.fields.get(name=field_name).value
         except models.DoesNotExist:
             return None
+
+    def fields_list(self):
+        return self.fields.all().values_list(flat=True)
+
+
+class Processor(HasFields, models.Model):
+    name = models.CharField(max_length=100)
+    task_name = models.CharField(max_length=100)
+    fields = models.ManyToManyField('core.BaseField')
+
+
+class Emitter(HasFields, models.Model):
+    name = models.CharField(max_length=100)
+    task_name = models.CharField(max_length=100)
+    fields = models.ManyToManyField('core.BaseField')
+
+
+class BaseField(models.Model):
+    name = models.CharField(max_length=100)
 
 
 class HookProcessorAssoc(HasFields, models.Model):
