@@ -12,6 +12,8 @@ urlpatterns = parser.patterns(
     '',
     # urls
     url(r'', 'core.views.index', name='index'),
-    url(r'v1/{username:slug}/{slug:slug}', 'core.views.handler', name='handler'),
+    url(r'v1/{username:slug}/{slug:slug}',
+        'core.views.handler',
+        name='handler'),
     url(r'admin/(.*)!', include(admin.site.urls)),
 )

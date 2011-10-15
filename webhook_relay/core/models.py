@@ -5,9 +5,12 @@ from imp import load_source
 class Hook(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField()
-    owner = models.ForeignKey('profiles.UserProfile', related_name='hooks')
-    processors = models.ManyToManyField('core.Processor', through='core.HookProcessorAssoc')
-    emitters = models.ManyToManyField('core.Emitter', through='core.HookEmitterAssoc')
+    owner = models.ForeignKey('profiles.UserProfile',
+                              related_name='hooks')
+    processors = models.ManyToManyField('core.Processor',
+                                        through='core.HookProcessorAssoc')
+    emitters = models.ManyToManyField('core.Emitter',
+                                      through='core.HookEmitterAssoc')
     active = models.BooleanField()
 
     class Meta:
