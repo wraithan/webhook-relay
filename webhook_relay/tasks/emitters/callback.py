@@ -5,10 +5,10 @@ from urllib2 import urlopen
 import json
 
 
-name = 'callback'
-fields = ['url',]
+fields = ['url', ]
 
-@task(name=name)
+
+@task(name=__package__)
 def emit(hea_id, data_id):
     data = Data.objects.get(id=data_id)
     hea = HookEmitterAssoc.objects.get(id=hea_id)
